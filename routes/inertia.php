@@ -16,7 +16,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 */
 
 Route::get('/', function (NovaRequest $request) {
-    $settingsDefinition = config('nova-settings-definition.settings', []);
+    $settingsDefinition = config('nova-settings.settings', []);
     $modelClass = config('nova-settings.model', 'App\\Models\\Setting');
 
     // Load current values from database

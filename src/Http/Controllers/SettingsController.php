@@ -13,7 +13,7 @@ class SettingsController extends Controller
      */
     public function index(Request $request)
     {
-        $settingsDefinition = config('nova-settings-definition.settings', []);
+        $settingsDefinition = config('nova-settings.settings', []);
         $modelClass = config('nova-settings.model', 'App\\Models\\Setting');
 
         // Load current values from database
@@ -35,7 +35,7 @@ class SettingsController extends Controller
      */
     public function store(Request $request)
     {
-        $settingsDefinition = config('nova-settings-definition.settings', []);
+        $settingsDefinition = config('nova-settings.settings', []);
         $modelClass = config('nova-settings.model', 'App\\Models\\Setting');
 
         // Build validation rules from definition
