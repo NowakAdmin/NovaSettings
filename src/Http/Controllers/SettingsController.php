@@ -15,11 +15,13 @@ class SettingsController extends Controller
     {
         $settingsDefinition = config('nova-settings.settings', []);
         $modelClass = config('nova-settings.model', 'App\\Models\\Setting');
+        $keyCol = config('nova-settings.keycol', 'key');
+        $valueCol = config('nova-settings.valuecol', 'value');
 
         // Load current values from database
         $settings = [];
         foreach ($settingsDefinition as $definition) {
-            $value = $modelClass::where('key', $definition['name'])->value('value');
+            $value = $modelClass::where($keyCol, $definition['name'])->value($valueCol);
             $settings[$definition['name']] = $value;
         }
 
@@ -37,6 +39,8 @@ class SettingsController extends Controller
     {
         $settingsDefinition = config('nova-settings.settings', []);
         $modelClass = config('nova-settings.model', 'App\\Models\\Setting');
+        $keyCol = config('nova-settings.keycol', 'key');
+        $valueCol = config('nova-settings.valuecol', 'value');
 
         // Build validation rules from definition
         $rules = [];
@@ -51,9 +55,16 @@ class SettingsController extends Controller
 
         // Save each setting
         foreach ($validated as $key => $value) {
+            $definition = $definitions->get($key);
+            
+            // Handle empty boolean values - store as "0" instead of null
+            if ($definition && $definition['type'] === 'boolean' && ($value === null || $value === '')) {
+                $value = '0';
+            }
+
             $modelClass::updateOrCreate(
-                ['key' => $key],
-                ['value' => $value]
+                [$keyCol => $key],
+                [$valueCol => $value]
             );
         }
 

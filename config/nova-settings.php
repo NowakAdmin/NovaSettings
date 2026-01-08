@@ -14,6 +14,12 @@ return [
     // Fully-qualified model class used to persist settings
     'model' => 'App\\Models\\Setting',
 
+    // Name of model column to store setting name/key
+    'keycol' => 'key',
+
+    // Name of model column to store setting value
+    'valuecol' => 'value',
+
     // Define all available settings with their types, validation rules, and groups
     'settings' => [
         /*
