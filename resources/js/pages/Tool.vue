@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <!-- Header -->
     <div class="flex items-center justify-between">
-      <h1 class="text-3xl font-bold text-gray-900">Nova Settings</h1>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Nova Settings</h1>
       <button
         @click="saveSettings"
         :disabled="isSaving"
@@ -21,17 +21,17 @@
       {{ message }}
     </div>
 
-    <div v-if="errors" class="rounded-lg border border-red-300 bg-red-50 p-4">
-      <p class="text-sm font-semibold text-red-900 mb-3">Validation Errors:</p>
+    <div v-if="errors" class="rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 p-4">
+      <p class="text-sm font-semibold text-red-900 dark:text-red-200 mb-3">Validation Errors:</p>
       <ul class="space-y-1">
-        <li v-for="(error, key) in errors" :key="key" class="text-sm text-red-800">
+        <li v-for="(error, key) in errors" :key="key" class="text-sm text-red-800 dark:text-red-300">
           <strong>{{ formatFieldName(key) }}:</strong> {{ Array.isArray(error) ? error[0] : error }}
         </li>
       </ul>
     </div>
 
     <!-- Tabs for groups -->
-    <div v-if="groupNames.length > 1" class="border-b border-gray-200">
+    <div v-if="groupNames.length > 1" class="border-b border-gray-200 dark:border-gray-700">
       <div class="flex space-x-8 px-0">
         <button
           v-for="groupName in groupNames"
@@ -40,8 +40,8 @@
           :class="[
             'px-0 py-4 text-sm font-medium border-b-2 transition duration-150',
             activeGroup === groupName
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+              : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
           ]"
         >
           {{ groupName }}
@@ -50,12 +50,12 @@
     </div>
 
     <!-- Form Card -->
-    <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
       <!-- Form fields for active group -->
       <div class="p-6 space-y-6">
         <div v-for="definition in activeGroupDefinitions" :key="definition.name" class="space-y-2">
           <!-- Label -->
-          <label :for="definition.name" class="block text-sm font-medium text-gray-700">
+          <label :for="definition.name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {{ definition.label }}
           </label>
 
@@ -66,7 +66,7 @@
             v-model="formData[definition.name]"
             type="text"
             :placeholder="definition.placeholder || ''"
-            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+            class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
           />
 
           <!-- Email Input -->
@@ -76,7 +76,7 @@
             v-model="formData[definition.name]"
             type="email"
             :placeholder="definition.placeholder || ''"
-            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+            class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
           />
 
           <!-- Number Input -->
@@ -86,7 +86,7 @@
             v-model.number="formData[definition.name]"
             type="number"
             :placeholder="definition.placeholder || ''"
-            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+            class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
           />
 
           <!-- Textarea -->
@@ -96,7 +96,7 @@
             v-model="formData[definition.name]"
             :placeholder="definition.placeholder || ''"
             rows="4"
-            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 resize-none"
+            class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 resize-none"
           />
 
           <!-- Boolean/Checkbox -->
@@ -107,9 +107,9 @@
               type="checkbox"
               :true-value="1"
               :false-value="0"
-              class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+              class="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 dark:focus:ring-offset-gray-800 cursor-pointer"
             />
-            <label :for="definition.name" class="ml-3 text-sm font-medium text-gray-700 cursor-pointer">
+            <label :for="definition.name" class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
               Enable
             </label>
           </div>
@@ -119,7 +119,7 @@
             v-else-if="definition.type === 'select'"
             :id="definition.name"
             v-model="formData[definition.name]"
-            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+            class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
           >
             <option value="">Select an option</option>
             <option v-for="option in definition.options" :key="option.value" :value="option.value">
@@ -128,14 +128,14 @@
           </select>
 
           <!-- Helper text -->
-          <p v-if="definition.help" class="text-xs text-gray-500 mt-1.5">
+          <p v-if="definition.help" class="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
             {{ definition.help }}
           </p>
         </div>
       </div>
 
       <!-- Form Footer (buttons) -->
-      <div class="flex items-center gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+      <div class="flex items-center gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 rounded-b-lg">
         <button
           @click="saveSettings"
           :disabled="isSaving"
@@ -149,7 +149,7 @@
         </button>
         <button
           @click="resetForm"
-          class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg bg-white hover:bg-gray-50 active:bg-gray-100 transition duration-150 font-medium text-sm"
+          class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 transition duration-150 font-medium text-sm"
         >
           Reset
         </button>
@@ -225,7 +225,7 @@ export default {
       
       // If nothing changed, show message and return
       if (Object.keys(changedValues).length === 0) {
-        messageClass.value = 'border-blue-300 bg-blue-50 p-4 text-sm text-blue-800'
+        messageClass.value = 'border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 p-4 text-sm text-blue-800 dark:text-blue-200'
         message.value = 'No changes to save'
         isSaving.value = false
         setTimeout(() => {
@@ -249,13 +249,13 @@ export default {
 
         if (!response.ok) {
           errors.value = data.errors || {}
-          messageClass.value = 'border-red-300 bg-red-50 p-4 text-sm text-red-800'
+          messageClass.value = 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-800 dark:text-red-200'
           message.value = data.message || 'Failed to save settings'
         } else {
           // Update original data to current values after successful save
           originalData.value = { ...formData.value }
           
-          messageClass.value = 'border-green-300 bg-green-50 p-4 text-sm text-green-800'
+          messageClass.value = 'border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20 p-4 text-sm text-green-800 dark:text-green-200'
           message.value = data.message || 'Settings saved successfully'
           // Auto-hide success message after 5 seconds
           setTimeout(() => {
@@ -263,7 +263,7 @@ export default {
           }, 5000)
         }
       } catch (error) {
-        messageClass.value = 'border-red-300 bg-red-50 p-4 text-sm text-red-800'
+        messageClass.value = 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-800 dark:text-red-200'
         message.value = `Error: ${error.message}`
       } finally {
         isSaving.value = false
