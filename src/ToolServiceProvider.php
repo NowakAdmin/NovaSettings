@@ -19,6 +19,10 @@ class ToolServiceProvider extends ServiceProvider
             $this->routes();
         });
 
+        $this->publishes([
+            __DIR__.'/../config/nova-settings.php' => config_path('nova-settings.php'),
+        ], 'nova-settings-config');
+
         Nova::serving(function (ServingNova $event) {
             //
         });
@@ -46,6 +50,6 @@ class ToolServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->mergeConfigFrom(__DIR__.'/../config/nova-settings.php', 'nova-settings');
     }
 }
