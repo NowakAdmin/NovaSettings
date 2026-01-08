@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Nowakadmin\NovaSettings\Http\Controllers\SettingsController;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /*
@@ -15,5 +16,29 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 */
 
 Route::get('/', function (NovaRequest $request) {
-    return inertia('NovaSettings');
+    $settingsDefinition = config('nova-settings-definition.settings', []);
+    $modelClass = config('nova-settings.model', 'App\\Models\\Setting');
+
+    // Load current values from database
+    $settings = [];
+    foreach ($settingsDefinition as $definition) {
+        $value = $modelClass::where('key', $definition['name'])->value('value');
+        $settings[$definition['name']] = $value;
+    }
+
+    // Group definitions
+    $groups = [];
+    foreach ($settingsDefinition as $definition) {
+        $groupName = $definition['group'] ?? 'General';
+        if (!isset($groups[$groupName])) {
+            $groups[$groupName] = [];
+        }
+        $groups[$groupName][] = $definition;
+    }
+
+    return inertia('NovaSettings', [
+        'definitions' => $settingsDefinition,
+        'settings' => $settings,
+        'groups' => $groups,
+    ]);
 });

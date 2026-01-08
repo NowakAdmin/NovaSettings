@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Nowakadmin\NovaSettings\Http\Controllers\SettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function (Request $request) {
-//     //
-// });
+Route::get('/settings', [SettingsController::class, 'index']);
+Route::post('/settings', [SettingsController::class, 'store']);
