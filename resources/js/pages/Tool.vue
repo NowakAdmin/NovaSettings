@@ -178,6 +178,7 @@ export default {
   },
   setup(props) {
     const formData = ref({ ...props.settings })
+    const originalData = ref({ ...props.settings }) // Track original values
     const activeGroup = ref(Object.keys(props.groups)[0] || 'General')
     const isSaving = ref(false)
     const message = ref('')
@@ -196,10 +197,42 @@ export default {
         .replace(/\b\w/g, (char) => char.toUpperCase())
     }
 
+    // Get only changed values
+    const getChangedValues = () => {
+      const changed = {}
+      for (const key in formData.value) {
+        const currentValue = formData.value[key]
+        const originalValue = originalData.value[key]
+        
+        // Compare values (handle null/undefined/empty string equivalence)
+        const normalizedCurrent = currentValue === null || currentValue === undefined || currentValue === '' ? '' : String(currentValue)
+        const normalizedOriginal = originalValue === null || originalValue === undefined || originalValue === '' ? '' : String(originalValue)
+        
+        if (normalizedCurrent !== normalizedOriginal) {
+          changed[key] = currentValue
+        }
+      }
+      return changed
+    }
+
     const saveSettings = async () => {
       isSaving.value = true
       message.value = ''
       errors.value = null
+
+      // Get only changed values
+      const changedValues = getChangedValues()
+      
+      // If nothing changed, show message and return
+      if (Object.keys(changedValues).length === 0) {
+        messageClass.value = 'border-blue-300 bg-blue-50 p-4 text-sm text-blue-800'
+        message.value = 'No changes to save'
+        isSaving.value = false
+        setTimeout(() => {
+          message.value = ''
+        }, 3000)
+        return
+      }
 
       try {
         const response = await fetch('/nova-vendor/novasettings/settings', {
@@ -209,7 +242,7 @@ export default {
             'X-Requested-With': 'XMLHttpRequest',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
           },
-          body: JSON.stringify(formData.value),
+          body: JSON.stringify(changedValues), // Only send changed values
         })
 
         const data = await response.json()
@@ -219,6 +252,9 @@ export default {
           messageClass.value = 'border-red-300 bg-red-50 p-4 text-sm text-red-800'
           message.value = data.message || 'Failed to save settings'
         } else {
+          // Update original data to current values after successful save
+          originalData.value = { ...formData.value }
+          
           messageClass.value = 'border-green-300 bg-green-50 p-4 text-sm text-green-800'
           message.value = data.message || 'Settings saved successfully'
           // Auto-hide success message after 5 seconds
@@ -236,6 +272,7 @@ export default {
 
     const resetForm = () => {
       formData.value = { ...props.settings }
+      originalData.value = { ...props.settings } // Reset original data too
       message.value = ''
       errors.value = null
     }
