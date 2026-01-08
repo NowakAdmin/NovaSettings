@@ -19,13 +19,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "Nowakadmin\\Novasettings\\": "src/"
+            "Nowakadmin\\NovaSettings\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Nowakadmin\\Novasettings\\ToolServiceProvider"
+                "Nowakadmin\\NovaSettings\\ToolServiceProvider"
             ]
         }
     },

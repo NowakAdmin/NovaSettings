@@ -1,12 +1,12 @@
 <?php
 
-namespace Nowakadmin\Novasettings\Http\Middleware;
+namespace Nowakadmin\NovaSettings\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 use Laravel\Nova\Nova;
 use Laravel\Nova\Tool;
-use Nowakadmin\Novasettings\Novasettings;
+use Nowakadmin\NovaSettings\NovaSettings;
 use Symfony\Component\HttpFoundation\Response;
 
 class Authorize
@@ -36,6 +36,6 @@ class Authorize
      */
     public function matchesTool(Tool $tool): bool
     {
-        return $tool instanceof Novasettings;
+        return $tool instanceof NovaSettings;
     }
 }

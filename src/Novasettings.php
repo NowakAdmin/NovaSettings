@@ -1,13 +1,13 @@
 <?php
 
-namespace Nowakadmin\Novasettings;
+namespace Nowakadmin\NovaSettings;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Nova;
 use Laravel\Nova\Tool;
 
-class Novasettings extends Tool
+class NovaSettings extends Tool
 {
     /**
      * Perform any tasks that need to happen when the tool is booted.
@@ -22,7 +22,7 @@ class Novasettings extends Tool
      */
     public function menu(Request $request): MenuSection
     {
-        return MenuSection::make('Novasettings')
+        return MenuSection::make('NovaSettings')
             ->path('/novasettings')
             ->icon('server');
     }
