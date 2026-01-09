@@ -201,7 +201,7 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
 export default {
   props: {
@@ -219,14 +219,37 @@ export default {
     },
   },
   setup(props) {
-    const formData = ref({ ...props.settings })
-    const originalData = ref({ ...props.settings }) // Track original values
+    // Deep clone settings to properly handle arrays
+    const deepClone = (obj) => {
+      if (obj === null || typeof obj !== 'object') return obj
+      if (Array.isArray(obj)) return obj.map(deepClone)
+      return Object.fromEntries(
+        Object.entries(obj).map(([k, v]) => [k, deepClone(v)])
+      )
+    }
+
+    const formData = ref(deepClone(props.settings))
+    const originalData = ref(deepClone(props.settings)) // Track original values
     const activeGroup = ref(Object.keys(props.groups)[0] || 'General')
     const isSaving = ref(false)
     const message = ref('')
     const messageClass = ref('')
     const errors = ref(null)
     const newListItem = ref({})
+
+    // Ensure all list-type fields are initialized as arrays
+    onMounted(() => {
+      props.definitions.forEach(def => {
+        if (def.type === 'list') {
+          if (!Array.isArray(formData.value[def.name])) {
+            formData.value[def.name] = []
+          }
+          if (!Array.isArray(originalData.value[def.name])) {
+            originalData.value[def.name] = []
+          }
+        }
+      })
+    })
 
     const groupNames = computed(() => {
       // Filter groups to only show those with at least one visible field
@@ -331,7 +354,7 @@ export default {
           message.value = data.message || 'Failed to save settings'
         } else {
           // Update original data to current values after successful save
-          originalData.value = { ...formData.value }
+          originalData.value = deepClone(formData.value)
           
           messageClass.value = 'border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20 p-4 text-sm text-green-800 dark:text-green-200'
           message.value = data.message || 'Settings saved successfully'
@@ -349,8 +372,8 @@ export default {
     }
 
     const resetForm = () => {
-      formData.value = { ...props.settings }
-      originalData.value = { ...props.settings } // Reset original data too
+      formData.value = deepClone(props.settings)
+      originalData.value = deepClone(props.settings) // Reset original data too
       message.value = ''
       errors.value = null
     }
