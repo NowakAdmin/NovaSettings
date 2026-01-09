@@ -136,7 +136,7 @@
       </div>
 
       <!-- Form Footer (buttons) -->
-      <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg flex items-center gap-3">
+      <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg flex items-center">
         <button
           @click="saveSettings"
           :disabled="isSaving"
@@ -150,7 +150,7 @@
         </button>
         <button
           @click="resetForm"
-          class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 transition duration-150 font-medium text-sm"
+          class="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 transition duration-150 font-medium text-sm"
         >
           Reset
         </button>
@@ -160,7 +160,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 export default {
   props: {
@@ -186,7 +186,15 @@ export default {
     const messageClass = ref('')
     const errors = ref(null)
 
-    const groupNames = computed(() => Object.keys(props.groups).sort())
+    const groupNames = computed(() => {
+      // Filter groups to only show those with at least one visible field
+      return Object.keys(props.groups)
+        .filter(groupName => {
+          const definitions = props.groups[groupName] || []
+          return definitions.some(def => isFieldVisible(def))
+        })
+        .sort()
+    })
 
     const activeGroupDefinitions = computed(() => {
       return props.groups[activeGroup.value] || []
@@ -206,6 +214,13 @@ export default {
       const [fieldName, expectedValue] = definition.vif
       return formData.value[fieldName] === expectedValue
     }
+
+    // Watch for changes in visible groups and switch to first available if current becomes hidden
+    watch(groupNames, (newGroups) => {
+      if (!newGroups.includes(activeGroup.value) && newGroups.length > 0) {
+        activeGroup.value = newGroups[0]
+      }
+    })
 
     // Get only changed values
     const getChangedValues = () => {
