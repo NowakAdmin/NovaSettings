@@ -23,12 +23,24 @@ composer require nowakadmin/nova-settings
 ### 2. Publish Configuration
 
 ```bash
-php artisan vendor:publish --provider="NowakAdmin\NovaSettings\ToolServiceProvider"
+php artisan vendor:publish --tag=nova-settings-config
 ```
 
 This creates `config/nova-settings.php` where you define your settings schema.
 
-### 3. Database Setup
+### 3. Publish and Run Migration
+
+```bash
+# Publish the settings table migration
+php artisan vendor:publish --tag=nova-settings-migration
+
+# Run the migration
+php artisan migrate
+```
+
+The migration creates a `settings` table with:
+
+### 4. Database Setup (Legacy/Manual)
 
 Ensure you have a settings table with at minimum:
 - `key` column (string) — Setting name/identifier
@@ -157,18 +169,18 @@ Each setting is an array with these properties:
 #### Select / Dropdown
 ```php
 [
-    'name' => 'invoice_provider',
-    'label' => 'Invoice Handling Provider',
+    'name' => 'notification_provider',
+    'label' => 'Notification Provider',
     'type' => 'select',
     'group' => 'Integrations',
-    'validation' => 'required|in:internal,other,another',
+    'validation' => 'required|in:email,sms,slack',
     'options' => [
-        ['label' => 'Internal System', 'value' => 'internal'],
-        ['label' => 'Other', 'value' => 'other'],
-        ['label' => 'Another', 'value' => 'another'],
+        ['label' => 'Email', 'value' => 'email'],
+        ['label' => 'SMS', 'value' => 'sms'],
+        ['label' => 'Slack', 'value' => 'slack'],
     ],
     'placeholder' => 'Choose provider',
-    'help' => 'Select which system handles invoices.',
+    'help' => 'Select which system handles notifications.',
 ]
 ```
 

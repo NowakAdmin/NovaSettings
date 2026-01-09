@@ -19,9 +19,15 @@ class ToolServiceProvider extends ServiceProvider
             $this->routes();
         });
 
+        // Publish configuration file
         $this->publishes([
             __DIR__.'/../config/nova-settings.php' => config_path('nova-settings.php'),
         ], 'nova-settings-config');
+
+        // Publish migration file
+        $this->publishes([
+            __DIR__.'/../database/migrations/create_settings_table.php.stub' => database_path('migrations/'.date('Y_m_d_His', time()).'_create_settings_table.php'),
+        ], 'nova-settings-migration');
 
         Nova::serving(function (ServingNova $event) {
             //
