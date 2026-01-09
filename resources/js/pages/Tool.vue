@@ -134,6 +134,7 @@
               <input
                 :id="definition.name + '_input'"
                 v-model="newListItem[definition.name]"
+                @keyup.enter="addListItem(definition.name)"
                 type="text"
                 :placeholder="definition.placeholder || 'Add value'"
                 class="flex-1 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
@@ -164,13 +165,16 @@
                 </button>
               </span>
             </div>
+            <div v-else-if="Array.isArray(formData[definition.name])" class="text-sm text-gray-500 dark:text-gray-400 italic">
+              No items added yet.
+            </div>
             <p v-if="definition.help" class="text-xs text-gray-500 dark:text-gray-400 mt-2">
               {{ definition.help }}
             </p>
           </div>
 
-          <!-- Helper text -->
-          <p v-if="definition.help" class="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
+          <!-- Helper text for non-list fields -->
+          <p v-else-if="definition.help && definition.type !== 'list'" class="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
             {{ definition.help }}
           </p>
         </div>
@@ -241,6 +245,11 @@ export default {
     onMounted(() => {
       props.definitions.forEach(def => {
         if (def.type === 'list') {
+          console.log(`Initializing list field: ${def.name}`, {
+            currentValue: formData.value[def.name],
+            isArray: Array.isArray(formData.value[def.name]),
+            originalValue: originalData.value[def.name]
+          })
           if (!Array.isArray(formData.value[def.name])) {
             formData.value[def.name] = []
           }
@@ -249,6 +258,7 @@ export default {
           }
         }
       })
+      console.log('Final formData after mount:', JSON.stringify(formData.value, null, 2))
     })
 
     const groupNames = computed(() => {
