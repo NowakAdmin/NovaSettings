@@ -200,6 +200,5 @@ return [
             'placeholder' => '5',
         ],
     ],
-    ],
 ];
 
