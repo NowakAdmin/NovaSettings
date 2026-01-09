@@ -21,10 +21,10 @@
       {{ message }}
     </div>
 
-    <div v-if="errors" class="rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 p-4">
-      <p class="text-sm font-semibold text-red-900 dark:text-red-200 mb-3">Validation Errors:</p>
+    <div v-if="errors" class="rounded-lg border border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950 p-4">
+      <p class="text-sm font-semibold text-red-900 dark:text-red-100 mb-3">Validation Errors:</p>
       <ul class="space-y-1">
-        <li v-for="(error, key) in errors" :key="key" class="text-sm text-red-800 dark:text-red-300">
+        <li v-for="(error, key) in errors" :key="key" class="text-sm text-red-800 dark:text-red-200">
           <strong>{{ formatFieldName(key) }}:</strong> {{ Array.isArray(error) ? error[0] : error }}
         </li>
       </ul>
@@ -136,7 +136,7 @@
       </div>
 
       <!-- Form Footer (buttons) -->
-      <div class="shrink-0 h-9 px-4 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring text-white dark:text-gray-800 inline-flex items-center font-bold shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm">
+      <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg flex items-center gap-3">
         <button
           @click="saveSettings"
           :disabled="isSaving"
