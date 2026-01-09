@@ -24,12 +24,16 @@ class SettingsController extends Controller
             $raw = $modelClass::where($keyCol, $definition['name'])->value($valueCol);
             // Decode list-type JSON values to arrays for the frontend
             if (($definition['type'] ?? null) === 'list') {
-                $decoded = null;
-                if (is_string($raw) && $raw !== '') {
-                    try {
-                        $decoded = json_decode($raw, true);
-                    } catch (\Throwable $e) {
-                        $decoded = null;
+                $decoded = [];
+                if (is_string($raw) && $raw !== '' && $raw !== 'null') {
+                    $decoded = json_decode($raw, true);
+                    // json_decode returns null on failure, check json_last_error
+                    if ($decoded === null || json_last_error() !== JSON_ERROR_NONE) {
+                        \Log::warning("Failed to decode JSON for setting: {$definition['name']}", [
+                            'raw_value' => $raw,
+                            'json_error' => json_last_error_msg()
+                        ]);
+                        $decoded = [];
                     }
                 }
                 $settings[$definition['name']] = is_array($decoded) ? $decoded : [];

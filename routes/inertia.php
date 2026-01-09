@@ -23,7 +23,31 @@ Route::get('/', function (NovaRequest $request) {
     $settings = [];
     foreach ($settingsDefinition as $definition) {
         $value = $modelClass::where('key', $definition['name'])->value('value');
-        $settings[$definition['name']] = $value;
+        
+        // Decode list-type JSON values to arrays for the frontend
+        if (($definition['type'] ?? null) === 'list') {
+            \Log::info("Loading list field: {$definition['name']}", [
+                'raw_value' => $value,
+                'is_string' => is_string($value),
+            ]);
+            
+            $decoded = [];
+            if (is_string($value) && $value !== '' && $value !== 'null') {
+                $decoded = json_decode($value, true);
+                if ($decoded === null || json_last_error() !== JSON_ERROR_NONE) {
+                    \Log::warning("JSON decode failed for {$definition['name']}", [
+                        'raw' => $value,
+                        'error' => json_last_error_msg()
+                    ]);
+                    $decoded = [];
+                }
+            }
+            $settings[$definition['name']] = is_array($decoded) ? $decoded : [];
+            
+            \Log::info("Final value for {$definition['name']}: " . json_encode($settings[$definition['name']]));
+        } else {
+            $settings[$definition['name']] = $value;
+        }
     }
 
     // Group definitions
