@@ -54,7 +54,7 @@
     <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
       <!-- Form fields for active group -->
       <div class="p-6 space-y-6">
-        <div v-for="definition in activeGroupDefinitions" :key="definition.name" class="space-y-2">
+        <div v-for="definition in activeGroupDefinitions" :key="definition.name" class="space-y-2" v-show="isFieldVisible(definition)">
           <!-- Label -->
           <label :for="definition.name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {{ definition.label }}
@@ -198,6 +198,15 @@ export default {
         .replace(/\b\w/g, (char) => char.toUpperCase())
     }
 
+    // Check if field should be visible based on vif condition
+    const isFieldVisible = (definition) => {
+      if (!definition.vif || !Array.isArray(definition.vif) || definition.vif.length !== 2) {
+        return true // No condition or invalid format, always show
+      }
+      const [fieldName, expectedValue] = definition.vif
+      return formData.value[fieldName] === expectedValue
+    }
+
     // Get only changed values
     const getChangedValues = () => {
       const changed = {}
@@ -290,6 +299,7 @@ export default {
       saveSettings,
       resetForm,
       formatFieldName,
+      isFieldVisible,
     }
   },
 }
