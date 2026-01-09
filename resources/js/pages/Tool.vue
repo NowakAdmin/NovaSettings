@@ -32,21 +32,22 @@
 
     <!-- Tabs for groups -->
     <div v-if="groupNames.length > 1" class="border-b border-gray-200 dark:border-gray-700">
-      <div class="flex space-x-8 px-0">
-        <button
-          v-for="groupName in groupNames"
-          :key="groupName"
-          @click="activeGroup = groupName"
-          :class="[
-            'px-0 py-4 text-sm font-medium border-b-2 transition duration-150',
-            activeGroup === groupName
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-              : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
-          ]"
-        >
-          {{ groupName }}
-        </button>
-      </div>
+      <ul class="flex flex-wrap -mb-px text-sm font-medium">
+        <li v-for="groupName in groupNames" :key="groupName" class="me-2">
+          <button
+            @click="activeGroup = groupName"
+            :class="[
+              'inline-flex items-center justify-center px-4 py-3 border-b-2 rounded-t-lg transition duration-150',
+              activeGroup === groupName
+                ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400 active'
+                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-gray-300 dark:hover:border-gray-600'
+            ]"
+            :aria-current="activeGroup === groupName ? 'page' : undefined"
+          >
+            {{ groupName }}
+          </button>
+        </li>
+      </ul>
     </div>
 
     <!-- Form Card -->
@@ -135,7 +136,7 @@
       </div>
 
       <!-- Form Footer (buttons) -->
-      <div class="flex items-center gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 rounded-b-lg">
+      <div class="shrink-0 h-9 px-4 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring text-white dark:text-gray-800 inline-flex items-center font-bold shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm">
         <button
           @click="saveSettings"
           :disabled="isSaving"
