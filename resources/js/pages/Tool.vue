@@ -128,6 +128,47 @@
             </option>
           </select>
 
+          <!-- List (array of strings) with add + pills -->
+          <div v-else-if="definition.type === 'list'">
+            <div class="flex items-center gap-2 mb-3">
+              <input
+                :id="definition.name + '_input'"
+                v-model="newListItem[definition.name]"
+                type="text"
+                :placeholder="definition.placeholder || 'Add value'"
+                class="flex-1 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+              />
+              <button
+                @click="addListItem(definition.name)"
+                type="button"
+                class="h-9 px-3 inline-flex items-center font-bold shadow rounded focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white text-sm"
+              >
+                Add
+              </button>
+            </div>
+            <div v-if="Array.isArray(formData[definition.name]) && formData[definition.name].length" class="flex flex-wrap gap-2">
+              <span
+                v-for="(val, idx) in formData[definition.name]"
+                :key="definition.name + '-' + idx + '-' + val"
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+              >
+                {{ val }}
+                <button
+                  @click="removeListItem(definition.name, idx)"
+                  type="button"
+                  class="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 text-white"
+                  aria-label="Remove"
+                  title="Remove"
+                >
+                  ✕
+                </button>
+              </span>
+            </div>
+            <p v-if="definition.help" class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              {{ definition.help }}
+            </p>
+          </div>
+
           <!-- Helper text -->
           <p v-if="definition.help" class="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
             {{ definition.help }}
@@ -185,6 +226,7 @@ export default {
     const message = ref('')
     const messageClass = ref('')
     const errors = ref(null)
+    const newListItem = ref({})
 
     const groupNames = computed(() => {
       // Filter groups to only show those with at least one visible field
@@ -228,13 +270,24 @@ export default {
       for (const key in formData.value) {
         const currentValue = formData.value[key]
         const originalValue = originalData.value[key]
-        
-        // Compare values (handle null/undefined/empty string equivalence)
-        const normalizedCurrent = currentValue === null || currentValue === undefined || currentValue === '' ? '' : String(currentValue)
-        const normalizedOriginal = originalValue === null || originalValue === undefined || originalValue === '' ? '' : String(originalValue)
-        
-        if (normalizedCurrent !== normalizedOriginal) {
-          changed[key] = currentValue
+
+        // Compare values (handle arrays vs scalars)
+        const isArrayCurrent = Array.isArray(currentValue)
+        const isArrayOriginal = Array.isArray(originalValue)
+
+        if (isArrayCurrent || isArrayOriginal) {
+          const curr = isArrayCurrent ? JSON.stringify(currentValue) : JSON.stringify([])
+          const orig = isArrayOriginal ? JSON.stringify(originalValue) : JSON.stringify([])
+          if (curr !== orig) {
+            changed[key] = currentValue
+          }
+        } else {
+          // Compare values (handle null/undefined/empty string equivalence)
+          const normalizedCurrent = currentValue === null || currentValue === undefined || currentValue === '' ? '' : String(currentValue)
+          const normalizedOriginal = originalValue === null || originalValue === undefined || originalValue === '' ? '' : String(originalValue)
+          if (normalizedCurrent !== normalizedOriginal) {
+            changed[key] = currentValue
+          }
         }
       }
       return changed
@@ -302,6 +355,23 @@ export default {
       errors.value = null
     }
 
+    const addListItem = (fieldName) => {
+      const val = (newListItem.value[fieldName] || '').trim()
+      if (!val) return
+      if (!Array.isArray(formData.value[fieldName])) {
+        formData.value[fieldName] = []
+      }
+      if (!formData.value[fieldName].includes(val)) {
+        formData.value[fieldName].push(val)
+      }
+      newListItem.value[fieldName] = ''
+    }
+
+    const removeListItem = (fieldName, idx) => {
+      if (!Array.isArray(formData.value[fieldName])) return
+      formData.value[fieldName].splice(idx, 1)
+    }
+
     return {
       formData,
       activeGroup,
@@ -315,6 +385,9 @@ export default {
       resetForm,
       formatFieldName,
       isFieldVisible,
+      newListItem,
+      addListItem,
+      removeListItem,
     }
   },
 }

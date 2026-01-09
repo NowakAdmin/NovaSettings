@@ -21,8 +21,21 @@ class SettingsController extends Controller
         // Load current values from database
         $settings = [];
         foreach ($settingsDefinition as $definition) {
-            $value = $modelClass::where($keyCol, $definition['name'])->value($valueCol);
-            $settings[$definition['name']] = $value;
+            $raw = $modelClass::where($keyCol, $definition['name'])->value($valueCol);
+            // Decode list-type JSON values to arrays for the frontend
+            if (($definition['type'] ?? null) === 'list') {
+                $decoded = null;
+                if (is_string($raw) && $raw !== '') {
+                    try {
+                        $decoded = json_decode($raw, true);
+                    } catch (\Throwable $e) {
+                        $decoded = null;
+                    }
+                }
+                $settings[$definition['name']] = is_array($decoded) ? $decoded : [];
+            } else {
+                $settings[$definition['name']] = $raw;
+            }
         }
 
         return response()->json([
@@ -47,7 +60,12 @@ class SettingsController extends Controller
         $definitions = collect($settingsDefinition)->keyBy('name');
 
         foreach ($settingsDefinition as $definition) {
-            $rules[$definition['name']] = $definition['validation'] ?? 'nullable';
+            // If type is 'list', ensure we validate as array
+            if (($definition['type'] ?? null) === 'list') {
+                $rules[$definition['name']] = $definition['validation'] ?? 'nullable|array';
+            } else {
+                $rules[$definition['name']] = $definition['validation'] ?? 'nullable';
+            }
         }
 
         // Validate
@@ -56,10 +74,19 @@ class SettingsController extends Controller
         // Save each setting
         foreach ($validated as $key => $value) {
             $definition = $definitions->get($key);
-            
+
             // Handle empty boolean values - store as "0" instead of null
-            if ($definition && $definition['type'] === 'boolean' && ($value === null || $value === '')) {
+            if ($definition && ($definition['type'] ?? null) === 'boolean' && ($value === null || $value === '')) {
                 $value = '0';
+            }
+
+            // Encode list arrays as JSON strings before saving
+            if ($definition && ($definition['type'] ?? null) === 'list') {
+                if (is_array($value)) {
+                    $value = json_encode(array_values($value));
+                } elseif ($value === null || $value === '') {
+                    $value = json_encode([]);
+                }
             }
 
             $modelClass::updateOrCreate(
