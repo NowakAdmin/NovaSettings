@@ -64,5 +64,6 @@ Route::get('/', function (NovaRequest $request) {
         'definitions' => $settingsDefinition,
         'settings' => $settings,
         'groups' => $groups,
+        'groupOrder' => config('nova-settings.group_order', []),
     ]);
 });

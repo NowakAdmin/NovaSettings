@@ -56,6 +56,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Tab Ordering
+    |--------------------------------------------------------------------------
+    |
+    | Control the order of tabs/groups in the NovaSettings UI. Provide an array
+    | of group names in the exact order you want them to appear. Any groups not
+    | listed here will be appended alphabetically after the ordered groups.
+    | Leave empty to keep the default alphabetical ordering for all groups.
+    |
+    */
+    'group_order' => [],
+
+    /*
+    |--------------------------------------------------------------------------
     | Settings Definitions
     |--------------------------------------------------------------------------
     |

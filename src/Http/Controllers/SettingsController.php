@@ -46,6 +46,7 @@ class SettingsController extends Controller
             'settings' => $settings,
             'definitions' => $settingsDefinition,
             'groups' => $this->groupDefinitions($settingsDefinition),
+            'groupOrder' => config('nova-settings.group_order', []),
         ]);
     }
 

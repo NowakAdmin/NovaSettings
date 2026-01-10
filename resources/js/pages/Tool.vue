@@ -56,7 +56,7 @@
       <div class="p-6 space-y-6">
         <div v-for="definition in activeGroupDefinitions" :key="definition.name" class="space-y-2" v-show="isFieldVisible(definition)">
           <!-- Label -->
-          <label :for="definition.name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label :for="definition.name" class="block text-sm font-medium text-gray-800 dark:text-gray-200">
             {{ definition.label }}
           </label>
 
@@ -110,7 +110,7 @@
               :false-value="0"
               class="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 dark:focus:ring-offset-gray-800 cursor-pointer"
             />
-            <label :for="definition.name" class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+            <label :for="definition.name" class="ml-3 text-sm font-medium text-gray-800 dark:text-gray-200 cursor-pointer">
               Enable
             </label>
           </div>
@@ -221,6 +221,10 @@ export default {
       type: Object,
       required: true,
     },
+    groupOrder: {
+      type: Array,
+      default: () => [],
+    },
   },
   setup(props) {
     // Deep clone settings to properly handle arrays
@@ -234,7 +238,19 @@ export default {
 
     const formData = ref(deepClone(props.settings))
     const originalData = ref(deepClone(props.settings)) // Track original values
-    const activeGroup = ref(Object.keys(props.groups)[0] || 'General')
+
+    const getInitialGroup = () => {
+      const availableGroups = Object.keys(props.groups)
+      if (!availableGroups.length) return 'General'
+
+      const orderedMatch = Array.isArray(props.groupOrder)
+        ? props.groupOrder.find(name => availableGroups.includes(name))
+        : null
+
+      return orderedMatch || availableGroups[0] || 'General'
+    }
+
+    const activeGroup = ref(getInitialGroup())
     const isSaving = ref(false)
     const message = ref('')
     const messageClass = ref('')
@@ -263,12 +279,26 @@ export default {
 
     const groupNames = computed(() => {
       // Filter groups to only show those with at least one visible field
-      return Object.keys(props.groups)
+      const visibleGroups = Object.keys(props.groups)
         .filter(groupName => {
           const definitions = props.groups[groupName] || []
           return definitions.some(def => isFieldVisible(def))
         })
-        .sort()
+
+      if (!visibleGroups.length) {
+        return []
+      }
+
+      const configuredOrder = Array.isArray(props.groupOrder) ? props.groupOrder : []
+
+      if (!configuredOrder.length) {
+        return [...visibleGroups].sort()
+      }
+
+      const ordered = configuredOrder.filter(name => visibleGroups.includes(name))
+      const remaining = visibleGroups.filter(name => !configuredOrder.includes(name)).sort()
+
+      return [...ordered, ...remaining]
     })
 
     const activeGroupDefinitions = computed(() => {
