@@ -32,6 +32,17 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | Tool Title
+    |--------------------------------------------------------------------------
+    |
+    | Customize the title displayed in the Nova menu and page header.
+    | Default: 'NovaSettings'
+    |
+    */
+    'title' => 'NovaSettings',
+
+    /*
+    |--------------------------------------------------------------------------
     | Settings Model
     |--------------------------------------------------------------------------
     |
@@ -74,15 +85,33 @@ return [
     |
     | Define your application settings below. Each setting is an array with:
     |
-    | - name:        Unique identifier (stored in DB key column)
-    | - label:       Human-readable label shown in UI
-    | - type:        Input type (text, email, number, textarea, boolean, select)
-    | - group:       Tab/group name for organization
-    | - validation:  Laravel validation rules (nullable recommended for optional)
-    | - placeholder: Placeholder text for inputs (optional)
-    | - help:        Helper text shown below the field (optional)
-    | - options:     Array of ['label' => 'X', 'value' => 'Y'] for select type
-    | - vif:         Conditional visibility [field_name, expected_value] (optional)
+    | - name:          Unique identifier (stored in DB key column)
+    | - label:         Default label (English fallback)
+    | - type:          Input type (text, email, number, textarea, boolean, select)
+    | - group:         Tab/group name for organization
+    | - validation:    Laravel validation rules (nullable recommended for optional)
+    | - placeholder:   Default placeholder text (English fallback, optional)
+    | - help:          Default helper text (English fallback, optional)
+    | - options:       Array of ['label' => 'X', 'value' => 'Y'] for select type
+    | - vif:           Conditional visibility [field_name, expected_value] (optional)
+    |
+    | Locale-Specific Translations:
+    | Add locale-specific overrides using keys like 'pl_label', 'pl_placeholder', 'pl_help':
+    |
+    | Example:
+    | [
+    |     'name' => 'company_name',
+    |     'label' => 'Company Name',          // Default (English) fallback
+    |     'pl_label' => 'Nazwa Firmy',        // Polish label
+    |     'placeholder' => 'Enter company',   // Default placeholder
+    |     'pl_placeholder' => 'Wpisz nazwę',  // Polish placeholder
+    |     'help' => 'Your business name',     // Default help text
+    |     'pl_help' => 'Nazwa Twojej firmy',  // Polish help text
+    | ]
+    |
+    | The system automatically loads the current APP_LOCALE and looks for
+    | locale-specific keys. If found, uses them; otherwise falls back to
+    | the default label/placeholder/help values.
     |
     */
     'settings' => [
@@ -95,26 +124,32 @@ return [
         [
             'name' => 'company_name',
             'label' => 'Company Name',
+            'pl_label' => 'Nazwa Firmy',
             'type' => 'text',
             'group' => 'Company Info',
             'validation' => 'nullable|string|max:255',
             'placeholder' => 'Enter company name',
+            'pl_placeholder' => 'Wpisz nazwę firmy',
         ],
         [
             'name' => 'company_address',
             'label' => 'Company Address',
+            'pl_label' => 'Adres Firmy',
             'type' => 'textarea',
             'group' => 'Company Info',
             'validation' => 'nullable|string|max:1000',
             'placeholder' => 'Enter company address',
+            'pl_placeholder' => 'Wpisz adres firmy',
         ],
         [
             'name' => 'company_phone',
             'label' => 'Company Phone',
+            'pl_label' => 'Telefon Firmy',
             'type' => 'text',
             'group' => 'Company Info',
             'validation' => 'nullable|string|max:20',
             'placeholder' => 'Enter phone number',
+            'pl_placeholder' => 'Wpisz numer telefonu',
         ],
         [
             'name' => 'company_email',

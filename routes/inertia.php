@@ -18,6 +18,18 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 Route::get('/', function (NovaRequest $request) {
     $settingsDefinition = config('nova-settings.settings', []);
     $modelClass = config('nova-settings.model', 'App\\Models\\Setting');
+    $currentLocale = app()->getLocale();
+
+    // Build translations map from config
+    $translations = [];
+    foreach ($settingsDefinition as $definition) {
+        $name = $definition['name'];
+        $translations[$name] = [
+            'label' => $definition["{$currentLocale}_label"] ?? $definition['label'] ?? $name,
+            'placeholder' => $definition["{$currentLocale}_placeholder"] ?? $definition['placeholder'] ?? '',
+            'help' => $definition["{$currentLocale}_help"] ?? $definition['help'] ?? '',
+        ];
+    }
 
     // Load current values from database
     $settings = [];
@@ -65,5 +77,8 @@ Route::get('/', function (NovaRequest $request) {
         'settings' => $settings,
         'groups' => $groups,
         'groupOrder' => config('nova-settings.group_order', []),
+        'title' => config('nova-settings.title', 'NovaSettings'),
+        'translations' => $translations,
+        'locale' => $currentLocale,
     ]);
 });

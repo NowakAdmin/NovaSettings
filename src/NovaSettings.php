@@ -21,7 +21,9 @@ class NovaSettings extends Tool
      * Build the menu that renders the navigation links for the tool.
      */
     public function menu(Request $request): MenuSection
-    {        return MenuSection::make(__('novasettings::NovaSettings'))
+    {        
+        $title = config('nova-settings.title', 'NovaSettings');
+        return MenuSection::make(__('novasettings::' . $title))
             ->path('/novasettings')
             ->icon('server');
     }

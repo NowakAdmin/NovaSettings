@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <!-- Header -->
     <div class="flex items-center justify-between">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ __('Nova Settings') }}</h1>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ title }}</h1>
       <button
         @click="saveSettings"
         :disabled="isSaving"
@@ -57,7 +57,7 @@
         <div v-for="definition in activeGroupDefinitions" :key="definition.name" class="space-y-2" v-show="isFieldVisible(definition)">
           <!-- Label -->
           <label :for="definition.name" class="block text-sm font-medium text-gray-800 dark:text-gray-200">
-            {{ definition.label }}
+            {{ getTranslatedProp(definition.name, 'label', definition.label) }}
           </label>
 
           <!-- Text Input -->
@@ -66,7 +66,7 @@
             :id="definition.name"
             v-model="formData[definition.name]"
             type="text"
-            :placeholder="definition.placeholder || ''"
+            :placeholder="getTranslatedProp(definition.name, 'placeholder', definition.placeholder || '')"
             class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
           />
 
@@ -76,7 +76,7 @@
             :id="definition.name"
             v-model="formData[definition.name]"
             type="email"
-            :placeholder="definition.placeholder || ''"
+            :placeholder="getTranslatedProp(definition.name, 'placeholder', definition.placeholder || '')"
             class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
           />
 
@@ -86,7 +86,7 @@
             :id="definition.name"
             v-model.number="formData[definition.name]"
             type="number"
-            :placeholder="definition.placeholder || ''"
+            :placeholder="getTranslatedProp(definition.name, 'placeholder', definition.placeholder || '')"
             class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
           />
 
@@ -95,7 +95,7 @@
             v-else-if="definition.type === 'textarea'"
             :id="definition.name"
             v-model="formData[definition.name]"
-            :placeholder="definition.placeholder || ''"
+            :placeholder="getTranslatedProp(definition.name, 'placeholder', definition.placeholder || '')"
             rows="4"
             class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 resize-none"
           />
@@ -136,7 +136,7 @@
                 v-model="newListItem[definition.name]"
                 @keyup.enter="addListItem(definition.name)"
                 type="text"
-                :placeholder="definition.placeholder || __('Add value')"
+                :placeholder="getTranslatedProp(definition.name, 'placeholder', definition.placeholder || __('Add value'))"
                 class="flex-1 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
               />
               <button
@@ -169,13 +169,13 @@
               {{ __('No items added yet.') }}
             </div>
             <p v-if="definition.help" class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              {{ definition.help }}
+              {{ getTranslatedProp(definition.name, 'help', definition.help) }}
             </p>
           </div>
 
           <!-- Helper text for non-list fields -->
           <p v-else-if="definition.help && definition.type !== 'list'" class="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
-            {{ definition.help }}
+            {{ getTranslatedProp(definition.name, 'help', definition.help) }}
           </p>
         </div>
       </div>
@@ -228,8 +228,25 @@ export default {
       type: Array,
       default: () => [],
     },
+    title: {
+      type: String,
+      default: 'NovaSettings',
+    },
+    translations: {
+      type: Object,
+      default: () => ({}),
+    },
+    locale: {
+      type: String,
+      default: 'en',
+    },
   },
   setup(props) {
+    // Helper to get translated field property with fallback
+    const getTranslatedProp = (fieldName, propName, defaultValue = '') => {
+      return props.translations[fieldName]?.[propName] ?? defaultValue
+    }
+
     // Deep clone settings to properly handle arrays
     const deepClone = (obj) => {
       if (obj === null || typeof obj !== 'object') return obj
@@ -448,6 +465,7 @@ export default {
       newListItem,
       addListItem,
       removeListItem,
+      getTranslatedProp,
     }
   },
 }
