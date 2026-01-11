@@ -19,10 +19,18 @@ class ToolServiceProvider extends ServiceProvider
             $this->routes();
         });
 
+        // Load translations
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'novasettings');
+
         // Publish configuration file
         $this->publishes([
             __DIR__.'/../config/nova-settings.php' => config_path('nova-settings.php'),
         ], 'nova-settings-config');
+
+        // Publish translations
+        $this->publishes([
+            __DIR__.'/../resources/lang' => lang_path('vendor/novasettings'),
+        ], 'nova-settings-lang');
 
         // Publish migration file
         $this->publishes([

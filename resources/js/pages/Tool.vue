@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <!-- Header -->
     <div class="flex items-center justify-between">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Nova Settings</h1>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ __('Nova Settings') }}</h1>
       <button
         @click="saveSettings"
         :disabled="isSaving"
@@ -12,7 +12,7 @@
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        {{ isSaving ? 'Saving...' : 'Save Settings' }}
+        {{ isSaving ? __('Saving...') : __('Save Settings') }}
       </button>
     </div>
 
@@ -22,7 +22,7 @@
     </div>
 
     <div v-if="errors" class="rounded-lg border border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950 p-4">
-      <p class="text-sm font-semibold text-red-900 dark:text-red-100 mb-3">Validation Errors:</p>
+      <p class="text-sm font-semibold text-red-900 dark:text-red-100 mb-3">{{ __('Validation Errors:') }}</p>
       <ul class="space-y-1">
         <li v-for="(error, key) in errors" :key="key" class="text-sm text-red-800 dark:text-red-200">
           <strong>{{ formatFieldName(key) }}:</strong> {{ Array.isArray(error) ? error[0] : error }}
@@ -111,7 +111,7 @@
               class="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 dark:focus:ring-offset-gray-800 cursor-pointer"
             />
             <label :for="definition.name" class="ml-3 text-sm font-medium text-gray-800 dark:text-gray-200 cursor-pointer">
-              Enable
+              {{ __('Enable') }}
             </label>
           </div>
 
@@ -122,7 +122,7 @@
             v-model="formData[definition.name]"
             class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
           >
-            <option value="">Select an option</option>
+            <option value="">{{ __('Select an option') }}</option>
             <option v-for="option in definition.options" :key="option.value" :value="option.value">
               {{ option.label }}
             </option>
@@ -136,7 +136,7 @@
                 v-model="newListItem[definition.name]"
                 @keyup.enter="addListItem(definition.name)"
                 type="text"
-                :placeholder="definition.placeholder || 'Add value'"
+                :placeholder="definition.placeholder || __('Add value')"
                 class="flex-1 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
               />
               <button
@@ -144,7 +144,7 @@
                 type="button"
                 class="h-9 px-3 inline-flex items-center font-bold shadow rounded focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white text-sm"
               >
-                Add
+                {{ __('Add') }}
               </button>
             </div>
             <div v-if="Array.isArray(formData[definition.name]) && formData[definition.name].length" class="flex flex-wrap gap-2">
@@ -158,15 +158,15 @@
                   @click="removeListItem(definition.name, idx)"
                   type="button"
                   class="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 text-white"
-                  aria-label="Remove"
-                  title="Remove"
+                  :aria-label="__('Remove')"
+                  :title="__('Remove')"
                 >
                   ✕
                 </button>
               </span>
             </div>
             <div v-else-if="Array.isArray(formData[definition.name])" class="text-sm text-gray-500 dark:text-gray-400 italic">
-              No items added yet.
+              {{ __('No items added yet.') }}
             </div>
             <p v-if="definition.help" class="text-xs text-gray-500 dark:text-gray-400 mt-2">
               {{ definition.help }}
@@ -191,13 +191,13 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          {{ isSaving ? 'Saving...' : 'Save Settings' }}
+          {{ isSaving ? __('Saving...') : __('Save Settings') }}
         </button>
         <button
           @click="resetForm"
           class="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 transition duration-150 font-medium text-sm"
         >
-          Reset
+          {{ __('Reset') }}
         </button>
       </div>
     </div>
@@ -367,7 +367,7 @@ export default {
       // If nothing changed, show message and return
       if (Object.keys(changedValues).length === 0) {
         messageClass.value = 'border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 p-4 text-sm text-blue-800 dark:text-blue-200'
-        message.value = 'No changes to save'
+        message.value = window.__('No changes to save')
         isSaving.value = false
         setTimeout(() => {
           message.value = ''
@@ -391,13 +391,13 @@ export default {
         if (!response.ok) {
           errors.value = data.errors || {}
           messageClass.value = 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-800 dark:text-red-200'
-          message.value = data.message || 'Failed to save settings'
+          message.value = data.message || window.__('Failed to save settings')
         } else {
           // Update original data to current values after successful save
           originalData.value = deepClone(formData.value)
           
           messageClass.value = 'border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20 p-4 text-sm text-green-800 dark:text-green-200'
-          message.value = data.message || 'Settings saved successfully'
+          message.value = data.message || window.__('Settings saved successfully')
           // Auto-hide success message after 5 seconds
           setTimeout(() => {
             message.value = ''
@@ -405,7 +405,7 @@ export default {
         }
       } catch (error) {
         messageClass.value = 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-800 dark:text-red-200'
-        message.value = `Error: ${error.message}`
+        message.value = `${window.__('Error:')} ${error.message}`
       } finally {
         isSaving.value = false
       }
