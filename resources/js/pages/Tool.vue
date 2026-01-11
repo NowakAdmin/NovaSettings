@@ -206,10 +206,11 @@
 
 <script>
 import { ref, computed, watch, onMounted } from 'vue'
-import { Localization } from 'laravel-nova'
+
+// Make __ function available globally from Nova
+window.__ = window.__ || ((key) => key)
 
 export default {
-  mixins: [Localization],
   props: {
     definitions: {
       type: Array,
@@ -263,11 +264,6 @@ export default {
     onMounted(() => {
       props.definitions.forEach(def => {
         if (def.type === 'list') {
-          console.log(`Initializing list field: ${def.name}`, {
-            currentValue: formData.value[def.name],
-            isArray: Array.isArray(formData.value[def.name]),
-            originalValue: originalData.value[def.name]
-          })
           if (!Array.isArray(formData.value[def.name])) {
             formData.value[def.name] = []
           }
@@ -276,7 +272,6 @@ export default {
           }
         }
       })
-      console.log('Final formData after mount:', JSON.stringify(formData.value, null, 2))
     })
 
     const groupNames = computed(() => {
