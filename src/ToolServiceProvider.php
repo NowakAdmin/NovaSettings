@@ -38,7 +38,19 @@ class ToolServiceProvider extends ServiceProvider
         ], 'nova-settings-migration');
 
         Nova::serving(function (ServingNova $event) {
-            //
+            $locale = app()->getLocale();
+
+            $candidatePaths = [
+                lang_path("vendor/novasettings/{$locale}.json"),
+                __DIR__ . "/../resources/lang/{$locale}.json",
+            ];
+
+            foreach ($candidatePaths as $path) {
+                if (is_readable($path)) {
+                    Nova::translations($path);
+                    break;
+                }
+            }
         });
     }
 

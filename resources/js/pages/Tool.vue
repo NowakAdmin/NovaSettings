@@ -206,8 +206,10 @@
 
 <script>
 import { ref, computed, watch, onMounted } from 'vue'
+import { Localization } from 'laravel-nova'
 
 export default {
+  mixins: [Localization],
   props: {
     definitions: {
       type: Array,
